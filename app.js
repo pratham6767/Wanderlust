@@ -8,7 +8,13 @@ const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate")
 const wrapasync=require("./utils/wrapasync.js");
 const ExpressError=require("./utils/ExpressError.js");
-const {listingSchema}=require("./schema.js")
+const {listingSchema,reviewSchema}=require("./schema.js")
+const Review=require("./models/review.js")
+
+
+
+
+
 main().then(()=>{
     console.log("connected to db");
 
@@ -49,6 +55,17 @@ const validateListing=(req,res,next)=>{
         next();
     }
 };
+
+const validateReview=(req,res,next)=>{
+    let {error}=reviewSchema.validate(req.body);
+    if(error){
+        let errMsg=error.details.map((el)=>el.message).join(",");
+        throw new ExpressError(400,errMsg);
+    }else{
+        next();
+    }
+};
+
 
 
 
@@ -100,6 +117,20 @@ app.delete("/listings/:id",wrapasync( async(req,res)=>{
     res.redirect("/listings");
 }))
 
+//review route
+//post method
+app.post("/listings/:id/review", validateReview ,wrapasync(async(req,res)=>{
+    let listing =await Listing.findById(req.params.id);
+    let newReview =new Review(req.body.review);
+
+    listing.reviews.push(newReview);
+
+    await newReview.save();
+    await listing.save();
+    
+    res.redirect(`/listind/${listing.id}`)
+
+}));
 
 
 
@@ -123,7 +154,7 @@ app.all("*",(req,res,next)=>{
 
 app.use((err,req,res,next)=>{
     let{statusCode="505",message="Something went wrong!!"}=err;
-    res.status(statusCode).render("error.ejs",{message});
+    res.status(statusCode).render("listings/error.ejs",{message});
     // res.status(statusCode).send(message)
 })
 app.listen(3000,()=>{
