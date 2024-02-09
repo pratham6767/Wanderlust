@@ -4,7 +4,7 @@ const wrapasync=require("../utils/wrapasync.js");
 const ExpressError=require("../utils/ExpressError.js");
 const {listingSchema}=require("../schema.js");
 const Listing=require("../models/listing.js")
-
+const {isLoggedIn}=require("../middleware.js");
 
 const validateListing=(req,res,next)=>{
     let {error}=listingSchema.validate(req.body);
@@ -25,11 +25,11 @@ router.get("/",wrapasync( async (req, res) => {
     res.render("listings/index.ejs", {allListings});
   }));
 //new route
-router.get("/new",wrapasync(async(req,res)=>{
+router.get("/new",isLoggedIn,async(req,res)=>{
     res.render("listings/new.ejs");
-}));
+});
 //show route
-router.get("/:id",wrapasync(async(req,res)=>{
+router.get("/:id",isLoggedIn,wrapasync(async(req,res)=>{
     let {id}=req.params;
     const listing=await Listing.findById(id).populate("reviews");
     if(!listing){
@@ -40,7 +40,7 @@ router.get("/:id",wrapasync(async(req,res)=>{
 
 }))
 //create route
-router.post("/",validateListing,wrapasync(async(req,res,next)=>{
+router.post("/",isLoggedIn,validateListing,wrapasync(async(req,res,next)=>{
     
     const newListing= new Listing(req.body.listing);
     await newListing.save();
@@ -59,7 +59,7 @@ router.get("/:id/edit",wrapasync(async(req,res)=>{
     res.render("listings/edit.ejs",{listing});
 }))
 //Update Route
-router.put("/:id",validateListing,wrapasync(async (req, res) => {
+router.put("/:id",isLoggedIn,validateListing,wrapasync(async (req, res) => {
     if(!req.body.listing){
         throw new ExpressError(400,"send valid data for listing");
     }
@@ -70,7 +70,7 @@ router.put("/:id",validateListing,wrapasync(async (req, res) => {
 }));
 
 //delete route
-router.delete("/:id",wrapasync( async(req,res)=>{
+router.delete("/:id",isLoggedIn,wrapasync( async(req,res)=>{
     let {id}= req.params;
     let deletedListing= await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
