@@ -1,7 +1,6 @@
 if (process.env.NODE_ENV !="production") {
     require("dotenv").config();
 }
-console.log(process.env.secret)
 
 const express =require("express");
 const app=express();
@@ -100,7 +99,7 @@ app.all("*",(req,res,next)=>{
 });
 
 app.use((err,req,res,next)=>{
-    let{statusCode="505",message="Something went wrong!!"}=err;
+    let{statusCode=505,message="Something went wrong!!"}=err;
     res.status(statusCode).render("error.ejs",{message});
     // res.status(statusCode).send(message)
 })
