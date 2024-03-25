@@ -72,7 +72,7 @@ body {
 .card-img-top{
     border-radius: 1rem !important;
     width: 100% !important;
-    object-fit: cover !important;
+    object-fit:cover !important;
 }
 
 .card-body{
@@ -100,7 +100,7 @@ body {
     border: none !important;
 }
 .show-img{
-    height: 30vh;
+    height: 40vh;
 }
 .btns{
     display: flex;

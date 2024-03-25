@@ -1,6 +1,6 @@
 <% layout("/layouts/boilerplate") %>
   
-    <h3>All Listings</h3>
+    <h3 class="text-center mb-3 pt-3">All Available Properties</h3>
     <!-- <form action="/listings/new" method="get">
       <button>new listing</button>
   </form> -->
@@ -13,7 +13,7 @@
       <div class="card-body">
         <p class="card-text">
         <b><%= listing.title %> </b><br>
-        &#8377; <%= listing.price.toLocaleString("en-IN") %>/night
+        &#8377; <%= listing.price.toLocaleString("en-IN") %>/month
         </p>
       </div>
     </div>
